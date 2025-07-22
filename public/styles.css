@@ -1,0 +1,17 @@
+/* Font */
+@import url("./fonts/fonts.css");
+
+/* Bootstrap */
+@import url("./stylesheets/bootstrap.min.css");
+@import url("./stylesheets/boostrap-select.min.css");
+
+/* Swiper Slider */
+@import url("./stylesheets/swiper-bundle.min.css");
+
+/* Theme Style */
+@import url("./stylesheets/shortcodes.css");
+@import url("./stylesheets/style.css");
+
+@import url("./stylesheets/responsive.css");
+
+@import url("./custom.css");

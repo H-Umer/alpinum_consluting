@@ -1,0 +1,304 @@
+/**
+  * Color
+  * Border Color
+  * Background Color
+*/
+
+/* Color
+-------------------------------------------------------------- */
+.color-4 {
+  a:hover,
+  a:focus,
+  #main-nav #menu-primary-menu .menu-item-has-children .menu-bar li:hover a,
+  #main-nav
+    #menu-primary-menu
+    .menu-item-has-children
+    .menu-bar
+    li.current-item
+    a,
+  #header.style-absolute
+    #main-nav
+    #menu-primary-menu
+    > li:hover
+    > a
+    #menu-primary-menu
+    > li.current-item
+    > a,
+  .header-default
+    .header-ct-center
+    #menu-primary-menu
+    .menu-item-has-children.current-item
+    > a,
+  .header-default
+    .header-ct-center
+    #menu-primary-menu
+    .menu-item-has-children.current-item
+    .nav-sub.current-item
+    > a,
+  .header-default
+    .header-ct-center
+    #menu-primary-menu
+    .menu-item-has-children.current-item
+    .nav-sub.current-item:hover
+    .nav-menu-item.current-item
+    > a,
+  #menu-primary-menu > li > a:hover,
+  #header.style-absolute #main-nav #menu-primary-menu > li.current-item > a,
+  .menu-mobile-popup #menu-primary-menu .current-item > a,
+  #header.style-absolute #main-nav #menu-primary-menu > li:hover > a,
+  #main-nav #menu-primary-menu > li .sub-menu.st1 .nav-sub:hover > a,
+  #main-nav #menu-primary-menu > li .sub-menu .nav-menu-item:hover a,
+  #main-nav #menu-primary-menu > li .sub-menu .menu-item:hover a,
+  #main-nav #menu-primary-menu > li .sub-menu .menu-item.current-item a,
+  .sub-categorie ul.pop-up li:hover span::before,
+  .sub-categorie ul.pop-up li.active span::before,
+  .sub-categorie .group-menu-category ul li a:hover,
+  .sticky-area-wrap .header-ct-right .account .sub-account-item a:hover,
+  .sticky-area-wrap
+    .header-ct-right
+    .account
+    .sub-account-item
+    a:hover
+    span::before,
+  .sticky-area-wrap .header-ct-right .bell .sub-notification-heading span,
+  .sticky-area-wrap
+    .header-ct-right
+    .bell
+    .sub-notification-item
+    .content
+    .status,
+  .tf-sl2.wd-review-job.thumb2 .tes-box .number,
+  .nice-select .option.selected,
+  .job-category-box h1 a:hover,
+  .job-category-box .btn-category-job,
+  .tf-button span,
+  .features-job .job-archive-header h4 a,
+  .features-job .job-archive-header h3 a:hover,
+  .features-job.style-3 .box-content h3 a:hover,
+  .wd-job-location .content h6 a:hover,
+  .wd-job-location .content .category:hover,
+  .employer-block .box-content h3 a:hover,
+  .icon-call-calling .path1:before,
+  .icon-call-calling .path2:before,
+  .icon-call-calling .path3:before,
+  .icon-call-calling .path4:before,
+  .navigation-menu-footer li a:hover,
+  .sub-categorie-mobile .pop-up .categories-mobile:hover > a,
+  .sub-categorie-mobile .pop-up .categories-mobilea:active > a,
+  .sub-categorie-mobile ul.pop-up li:hover span::before,
+  .sub-categorie-mobile ul.pop-up li.active span::before,
+  .wd-testimonials .author-group .position,
+  .features-job.style-3 .box-content h4 a,
+  .box-latest .box-content h3 a:hover,
+  .sl-icon-box .icon-content h5 a:hover,
+  .box-latest .heading .tag,
+  .widget-filter button:hover,
+  .cv-form-details .list-infor li .detail a,
+  .group-form #amount,
+  .salary-slider-one .salary-outer,
+  .bg-coupon a,
+  .wrapper-author-page-title.style2 .wd-author-page-title .tag-head,
+  .wrapper-author-page-title.style2 .wd-author-page-title h4 a,
+  .blog .list-blog .widget-blog-1 .main-title a:hover,
+  .widget-blog-1 .sub-title,
+  .widget-side-bar .categories-wrap .categories-item:hover a,
+  .wd-thum-career .job-archive-header .career-info li:first-child,
+  .blog-detail-side-bar-content .nav-links .title-post a,
+  .widget-comment-wrap .content-post .button a,
+  .shopping-cart .coupon .cp-form .btn i,
+  .tf-iconbox.style-3 .box-content button,
+  .wd-form-login .group-ant-choice a,
+  .wd-form-login .menu-tab li:hover,
+  .wd-form-login .menu-tab li.active,
+  .wd-job-author2 .content-left .content .category {
+    color: #1967d2;
+  }
+
+  .tf-iconbox .icon svg path,
+  .wd-review-job.thumb1 .trader-box .icon svg path,
+  .wd-review-job.thumb1 .trader-box .icon svg circle,
+  .wd-review-job .icon-review .icon svg path {
+    stroke: #1967d2;
+  }
+
+  .wd-review-job.contentbox1 .icon svg path,
+  .group-icon .sl-icon-box.box:hover .icon svg path {
+    fill: #1967d2;
+  }
+
+  /* Border Color
+-------------------------------------------------------------- */
+  .sticky-area-wrap .header-ct-right .button a,
+  .sticky-area-wrap .header-ct-right .bell .sub-notification-item .time::before,
+  .wd-review-job .list-review2 li:hover::before,
+  .wd-review-job .list-review2 li.active::before,
+  .features-job:hover,
+  .features-job.style-3:hover,
+  .features-job.style-3.mb1:hover,
+  .employer-block:hover,
+  .navigation-menu-footer li a::after,
+  .menu-mobile-popup .button a,
+  .tf-button.style-1,
+  .features-job.ct-tab.active,
+  .group-select-display .btn-display:hover,
+  .group-select-display .btn-display.active,
+  .widget-filter button,
+  .widget-filter button:hover,
+  .employer-block.style-2 .inner-box .button-readmore button,
+  .employer-block.style-3 .inner-box button,
+  .tf-btn,
+  .wd-filter-radio .round input[type="checkbox"]:checked + label,
+  .group-form .ui-slider-handle,
+  .wd-findjob-filer .button-filter,
+  .salary-slider-one .ui-widget-content .ui-state-default,
+  .wrapper-author-page-title.style2 .btn-author,
+  .wrapper-author-page-title.style2 .btn-author:hover,
+  .wrapper-author-page-title.style2 .btn-popup,
+  .employer-block.wd-shop.stc .btn-employer,
+  .shopping-cart .coupon .cp-form .btn,
+  .bg-coupon,
+  .tab-term li.active,
+  .tab-term li:hover,
+  .pricing-box .btn,
+  .wd-cv-item .profile h4,
+  .job-article.single-job .menu-tab li.active,
+  .wrapper-author-page-title .tf-btn:hover,
+  .group-select-display .menu-tab .ct-tab.active,
+  .tf-iconbox.style-3:hover,
+  .wd-form-login button,
+  .cv-road-map .inner .dot-icon,
+  .btn-primary,
+  .btn-primary:hover {
+    border-color: #1967d2;
+  }
+
+  /* Background Color
+-------------------------------------------------------------- */
+  #main-nav #menu-primary-menu li.current-item a::after,
+  #main-nav #menu-primary-menu li:hover a::after,
+  #header.style-absolute
+    #main-nav
+    #menu-primary-menu
+    li.current-item
+    > a::after,
+  #header.style-absolute #main-nav #menu-primary-menu li:hover > a::after,
+  .sticky-area-wrap .header-ct-right .bell::after,
+  .sticky-area-wrap .header-ct-right .button a:hover,
+  .sticky-area-wrap .header-ct-right .bell .sub-notification-button,
+  button.btn-find,
+  .wrap-testimonials .menu-tab .user-tag.active,
+  .features-job .job-archive-footer .job-tag li a:hover,
+  #scroll-top::before,
+  #subscribe-form button,
+  .list-social li a:hover,
+  .menu-mobile-popup .menu-tab .user-tag.active,
+  .tf-button.style-1:hover,
+  .switcher-container h2 a,
+  .features-job .inner-box .button-readmore button.btn-apply,
+  .features-job .inner-box .button-readmore .btn-apply,
+  .features-job.style-3 .category .job-tag li a:hover,
+  .features-job.style-3 .group-btn button,
+  .features-job.style-2.stc-apply .job-footer-right span.icon-dollar,
+  .frag-btn:hover,
+  .rating-review .right-rating .rating-details .donat-bg .custom-donat,
+  .box-latest .heading .tag:hover,
+  .wd-review-job .list-review2 li:hover::before,
+  .wd-review-job .list-review2 li.active::before,
+  .group-select-display .btn-display:hover,
+  .group-select-display .btn-display.active,
+  .pagination-job li.current a,
+  .pagination-job li a:hover,
+  .wd-findjob-filer .button-filter:hover,
+  .widget-filter button,
+  .wd-job-author2 .content-right .top .btn,
+  .wd-job-author2 .content-right .price .icon-dollar,
+  .wd-job-author2 .content-left .content .tags a:hover,
+  .cv-form-details .wd-social ul li a:hover,
+  .cv-form-details .form-job-single button,
+  .employer-block.style-2 .inner-box .button-readmore button:hover,
+  .employer-block.style-3 .inner-box button:hover,
+  .tf-btn:hover,
+  .tf-btn-submit,
+  .wd-filter-radio .round input[type="checkbox"]:checked + label,
+  .group-form .ui-slider-range,
+  .wd-meta-select-job button,
+  .salary-slider-one .ui-slider .ui-slider-range,
+  .wd-meta-select-job button.btn-pri,
+  .cv-form-details .btn-dowload,
+  .wrapper-author-page-title.style2 .btn-author:hover,
+  .wrapper-author-page-title.style2 .btn-popup,
+  .progress-item .donat-bg .custom-donat,
+  .wd-cv-skill .progress-item .donat-bg .custom-donat::after,
+  .form-candidate button,
+  .employer-block.wd-shop.stc .btn-employer:hover,
+  .wd-review-job.page-text.stc .tf-button,
+  .shop-details .shop-content button,
+  .shopping-cart .list-shop li .quantity .btn-quantity:hover,
+  .shopping-cart .list-shop li .quantity .btn-quantity.active,
+  .shopping-cart .coupon .group-ip button,
+  .shopping-cart .view-cart .btn,
+  .wd-payment .btn-payment,
+  .group-pricing-v1 .menu-tab li.active,
+  .group-pricing-v1 .menu-tab li:hover,
+  .pricing-box .group-tag .tag2,
+  .pricing-box.active .btn,
+  .pricing-box .btn:hover,
+  .group-pricing-v1.st2 .pricing-box.active,
+  .group-pricing-v1.st2 .pricing-box:hover,
+  .wd-form-login button,
+  .banner-contact-v1 a,
+  .infor-contact-v1,
+  .wd-cv-item .item-group .content-left::after,
+  .wd-author-page-title .tag-head,
+  .widget-blog-1
+    .sub-title:hover.widget-popular-tags
+    .widget-popular-tags-wrap
+    .widget-popular-tags-item
+    a:hover,
+  .wd-thum-career .career-tag li a:hover,
+  .cv-road-map::after,
+  .select-language .dropdown-item.active,
+  .select-language .dropdown-item:active,
+  .btn-primary,
+  .btn-primary:hover {
+    background-color: #1967d2;
+  }
+
+  button.btn-find:hover,
+  .features-job.style-3 .group-btn button:hover {
+    background-color: #1967d2;
+    opacity: 0.9;
+  }
+
+  .group-input input[name="radio"] {
+    accent-color: #1967d2;
+  }
+
+  .wrapper-author-page-title.style2 .wd-author-page-title .tag-head,
+  .widget-blog-1 .sub-title,
+  .wd-thum-career .job-archive-header .career-info li:first-child,
+  .wd-form-login .menu-tab li:hover,
+  .wd-form-login .menu-tab li.active {
+    background: rgba(25, 103, 210, 0.1);
+  }
+
+  .wrapper-author-page-title .btn-author:hover {
+    background: transparent;
+  }
+
+  .wrapper-author-page-title .tf-btn.btn-popup,
+  .wrapper-author-page-title .tf-btn:first-child:hover,
+  .widget-blog-1 .sub-title:hover,
+  .widget-popular-tags
+    .widget-popular-tags-wrap
+    .widget-popular-tags-item
+    a:hover {
+    color: #fff;
+  }
+  .tf-btn:hover {
+    color: #fff;
+  }
+  .menu-item .current-item {
+    color: #1967d2 !important;
+  }
+}

@@ -1,0 +1,591 @@
+// generator client {
+//   provider = "prisma-client-js"
+// }
+
+// datasource db {
+//   provider = "mongodb"
+//   url      = env("DATABASE_URL")  // ✅ correct syntax
+// }
+
+// type SocialLink {
+//   platform String
+//   url      String
+// }
+
+// enum ConnectsType {
+//   PURCHASE
+//   USAGE
+//   BONUS
+// }
+
+// enum UserRole {
+//   CONTRACTOR
+//   COMPANY
+//   ADMIN
+// }
+
+// enum TxnStatus {
+//   PENDING
+//   COMPLETED
+//   FAILED
+//   REFUNDED
+// }
+
+// enum CourseStatus {
+//   CLOSED
+//   OPEN
+// }
+
+// enum ContractStatus {
+//   PENDING
+//   ACCEPTED
+//   REJECTED
+// }
+
+// enum JobType {
+//   FULL_TIME
+//   PART_TIME
+//   CONTRACT
+//   FREELANCE
+// }
+
+// enum JobStatus {
+//   ACTIVE
+//   INACTIVE
+// }
+
+// enum JobApplicationStatus {
+//   APPLIED
+//   PENDING
+//   NOTAPPLIED
+// }
+
+// enum InterestStatus {
+//   PENDING
+//   CONTACTED
+//   REJECTED
+//   HIRED
+// }
+
+// model User {
+//   id                String                       @id @default(auto()) @map("_id") @db.ObjectId
+//   firstName         String?
+//   lastName          String?
+//   email             String                       @unique
+//   password          String
+//   createdAt         DateTime                     @default(now())
+//   updatedAt         DateTime                     @updatedAt
+//   connects          Int?
+//   resetPassToken    String?
+//   tokenExpire       DateTime?
+//   role              UserRole
+//   contractorProfile ContractorProfile?
+//   companyProfile    CompanyProfile?
+//   connectPurchases  ConnectPurchaseTransaction[]
+//   connectUsages     ConnectUsage[]
+//   contractorResume  ContractorResume[]
+//   sentContracts     JobContract[]                @relation("CompanyContract")
+//   receivedContracts JobContract[]                @relation("ContractorContract")
+//   moodleUser        MoodleUser?
+//   jobPosts          JobPost[]
+//   jobApplication    JobApplication[]
+//   Teams      TeamMember[]                // 👈 This is the opposite relation field
+
+// }
+
+// model PublicResume {
+//   id            String   @id @default(auto()) @map("_id") @db.ObjectId
+//   code          String   @unique
+//   designation   String?
+//   objective     String?
+//   summary       String[]
+//   experience    String?
+//   skills        String[]
+//   techniques    String[]
+//   tools         String[]
+//   education     String[]
+//   methodologies String[]
+//   resumeUrl     String?
+//   uploadedAt    DateTime @default(now())
+//   updatedAt     DateTime @updatedAt
+//   userId        String?  @db.ObjectId
+// }
+
+// model ContractorResume {
+//   id         String   @id @default(auto()) @map("_id") @db.ObjectId
+//   userId     String   @db.ObjectId
+//   user       User     @relation(fields: [userId], references: [id])
+//   fileUrl    String?
+//   uploadedAt DateTime @default(now())
+// }
+
+// model JobContract {
+//   id               String         @id @default(auto()) @map("_id") @db.ObjectId
+//   companyId        String         @db.ObjectId
+//   company          User           @relation("CompanyContract", fields: [companyId], references: [id])
+//   contractorId     String         @db.ObjectId
+//   contractor       User           @relation("ContractorContract", fields: [contractorId], references: [id])
+//   contractDocument String?
+//   signedDocument   String?
+//   status           ContractStatus @default(PENDING)
+//   uploadedAt       DateTime       @default(now())
+// }
+
+// model JobPost {
+//   id                     String           @id @default(auto()) @map("_id") @db.ObjectId
+//   companyId              String           @db.ObjectId
+//   company                User             @relation(fields: [companyId], references: [id])
+//   role                   String
+//   description            String
+//   additionalRequirements String?
+//   experience             Int
+//   rate                   Int
+//   currency               String
+//   location               String
+//   availability           DateTime?
+//   jobType                JobType
+//   status                 JobStatus        @default(ACTIVE)
+//   skills                 String[]
+//   createdAt              DateTime         @default(now())
+//   updatedAt              DateTime         @updatedAt
+//   jobApplication         JobApplication[]
+  
+// }
+
+// model JobApplication {
+//   id           String               @id @default(auto()) @map("_id") @db.ObjectId
+//   jobId        String               @db.ObjectId
+//   job          JobPost              @relation(fields: [jobId], references: [id])
+//   contractorId String               @db.ObjectId
+//   contractor   User                 @relation(fields: [contractorId], references: [id])
+//   status       JobApplicationStatus
+//   createdAt    DateTime             @default(now())
+
+//   @@unique([jobId, contractorId])
+// }
+
+// model ContractorProfile {
+//   id               String       @id @default(auto()) @map("_id") @db.ObjectId
+//   imageUrl         String?
+//   yearsExperience  String?
+//   hourlyRate       Int?
+//   city             String?
+//   country          String?
+//   onSiteWorkDays   Int?
+//   isRelocate       Boolean?
+//   availability     DateTime?
+//   startTime        String?
+//   endTime          String?
+//   availabilityZone String?
+//   currency         String?
+//   designation      String?
+//   degreeInfo       String?
+//   languages        String[]
+//   tools            String[]
+//   socialLink       SocialLink[]
+//   methodologies    String[]
+//   availabilityDays String[]
+//   createdAt        DateTime     @default(now())
+//   userId           String       @unique @db.ObjectId
+//   user             User         @relation(fields: [userId], references: [id])
+// }
+
+// model CompanyProfile {
+//   id          String       @id @default(auto()) @map("_id") @db.ObjectId
+//   companyName String       @unique
+//   industry    String?
+//   companySize String?
+//   website     String?
+//   description String?
+//   logoUrl     String?
+//   location    String?
+//   foundedYear Int?
+//   socialLinks SocialLink[]
+//   createdAt   DateTime     @default(now())
+//   updatedAt   DateTime     @updatedAt
+//   userId      String       @unique @db.ObjectId
+//   user        User         @relation(fields: [userId], references: [id])
+// }
+
+// model ConnectPurchaseTransaction {
+//   id            String       @id @default(auto()) @map("_id") @db.ObjectId
+//   userId        String       @db.ObjectId
+//   user          User         @relation(fields: [userId], references: [id])
+//   type          ConnectsType
+//   connects      Int
+//   pricePaid     Float?
+//   currency      String?
+//   paymentMethod String?
+//   transactionId String?
+//   status        TxnStatus    @default(COMPLETED)
+//   createdAt     DateTime     @default(now())
+// }
+
+// model ConnectUsage {
+//   id           String   @id @default(auto()) @map("_id") @db.ObjectId
+//   jobId        String?
+//   connectsUsed Int
+//   createdAt    DateTime @default(now())
+//   reason       String?
+//   userId       String   @db.ObjectId
+//   user         User     @relation(fields: [userId], references: [id])
+// }
+
+// model MoodleUser {
+//   id             String             @id @default(auto()) @map("_id") @db.ObjectId
+//   moodleUserId   Int                @unique
+//   moodleUsername String
+//   createdAt      DateTime?          @default(now())
+//   userId         String             @unique @db.ObjectId
+//   user           User               @relation(fields: [userId], references: [id])
+//   enrollments    MoodleEnrollment[]
+// }
+
+// model MoodleCourses {
+//   id               String             @id @default(auto()) @map("_id") @db.ObjectId
+//   courseId         Int                @unique
+//   courseName       String
+//   status           CourseStatus       @default(CLOSED)
+//   startDate        DateTime?
+//   endDate          DateTime?
+//   moodleEnrollment MoodleEnrollment[]
+// }
+
+// model MoodleEnrollment {
+//   id             String        @id @default(auto()) @map("_id") @db.ObjectId
+//   grade          Float?
+//   enrolledAt     DateTime?
+//   completedAt    DateTime?
+//   moodleUserId   String        @db.ObjectId
+//   moodleUser     MoodleUser    @relation(fields: [moodleUserId], references: [id])
+//   moodleCourseId Int
+//   MoodleCourses  MoodleCourses @relation(fields: [moodleCourseId], references: [courseId])
+
+//   @@unique([moodleUserId, moodleCourseId])
+// }
+
+
+// // model Team {
+// //   id           String   @id @default(auto()) @map("_id") @db.ObjectId
+// //   name         String
+// //   description  String
+// //   projectType  String
+// //   members      String[]
+// //   logoUrl      String?
+// //   createdAt    DateTime  @default(now())
+// // }
+
+
+
+// model Team {
+//   id           String   @id @default(auto()) @map("_id") @db.ObjectId
+//   name         String
+//   description  String
+//   projectType  String
+//   logoUrl      String?
+//   createdAt    DateTime @default(now())
+//   teamMembers TeamMember[] // 👈 This is the opposite relation field
+
+// }
+
+
+// model TeamMember {
+//   id       String   @id @default(auto()) @map("_id") @db.ObjectId
+//   user     User     @relation(fields: [userId], references: [id])
+//   userId   String   @db.ObjectId
+
+//   team     Team     @relation(fields: [teamId], references: [id])
+//   teamId   String   @db.ObjectId
+
+//   role     String?  // Optional: "Admin", "Member", etc.
+//   joinedAt DateTime @default(now())
+
+//   @@unique([userId, teamId]) // Prevent same user joining team multiple times
+// }
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+type SocialLink {
+  platform String
+  url      String
+}
+
+enum ConnectsType {
+  PURCHASE
+  USAGE
+  BONUS
+}
+
+enum UserRole {
+  CONTRACTOR
+  COMPANY
+  ADMIN
+}
+
+enum TxnStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+}
+
+enum CourseStatus {
+  CLOSED
+  OPEN
+}
+
+enum ContractStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+enum JobType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  FREELANCE
+}
+
+enum JobStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum JobApplicationStatus {
+  APPLIED
+  PENDING
+  NOTAPPLIED
+}
+
+enum InterestStatus {
+  PENDING
+  CONTACTED
+  REJECTED
+  HIRED
+}
+
+model User {
+  id                String                       @id @default(auto()) @map("_id") @db.ObjectId
+  firstName         String?
+  lastName          String?
+  email             String                       @unique
+  password          String
+  createdAt         DateTime                     @default(now())
+  updatedAt         DateTime                     @updatedAt
+  connects          Int?
+  resetPassToken    String?
+  tokenExpire       DateTime?
+  role              UserRole
+  contractorProfile ContractorProfile?
+  companyProfile    CompanyProfile?
+  connectPurchases  ConnectPurchaseTransaction[]
+  connectUsages     ConnectUsage[]
+  contractorResume  ContractorResume[]
+  sentContracts     JobContract[]                @relation("CompanyContract")
+  receivedContracts JobContract[]                @relation("ContractorContract")
+  moodleUser        MoodleUser?
+  jobPosts          JobPost[]
+  jobApplication    JobApplication[]
+  teamMemberships   TeamMember[]                 // 🔄 CHANGED: Renamed from Teams to teamMemberships for clarity
+}
+
+model PublicResume {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  code          String   @unique
+  designation   String?
+  objective     String?
+  summary       String[]
+  experience    String?
+  skills        String[]
+  techniques    String[]
+  tools         String[]
+  education     String[]
+  methodologies String[]
+  resumeUrl     String?
+  uploadedAt    DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  userId        String?  @db.ObjectId
+}
+
+model ContractorResume {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String   @db.ObjectId
+  user       User     @relation(fields: [userId], references: [id])
+  fileUrl    String?
+  uploadedAt DateTime @default(now())
+}
+
+model JobContract {
+  id               String         @id @default(auto()) @map("_id") @db.ObjectId
+  companyId        String         @db.ObjectId
+  company          User           @relation("CompanyContract", fields: [companyId], references: [id])
+  contractorId     String         @db.ObjectId
+  contractor       User           @relation("ContractorContract", fields: [contractorId], references: [id])
+  contractDocument String?
+  signedDocument   String?
+  status           ContractStatus @default(PENDING)
+  uploadedAt       DateTime       @default(now())
+}
+
+model JobPost {
+  id                     String           @id @default(auto()) @map("_id") @db.ObjectId
+  companyId              String           @db.ObjectId
+  company                User             @relation(fields: [companyId], references: [id])
+  role                   String
+  description            String
+  additionalRequirements String?
+  experience             Int
+  rate                   Int
+  currency               String
+  location               String
+  availability           DateTime?
+  jobType                JobType
+  status                 JobStatus        @default(ACTIVE)
+  skills                 String[]
+  createdAt              DateTime         @default(now())
+  updatedAt              DateTime         @updatedAt
+  jobApplication         JobApplication[]
+}
+
+model JobApplication {
+  id           String               @id @default(auto()) @map("_id") @db.ObjectId
+  jobId        String               @db.ObjectId
+  job          JobPost              @relation(fields: [jobId], references: [id])
+  contractorId String               @db.ObjectId
+  contractor   User                 @relation(fields: [contractorId], references: [id])
+  status       JobApplicationStatus
+  createdAt    DateTime             @default(now())
+
+  @@unique([jobId, contractorId])
+}
+
+model ContractorProfile {
+  id               String       @id @default(auto()) @map("_id") @db.ObjectId
+  imageUrl         String?
+  yearsExperience  String?
+  hourlyRate       Int?
+  city             String?
+  country          String?
+  onSiteWorkDays   Int?
+  isRelocate       Boolean?
+  availability     DateTime?
+  startTime        String?
+  endTime          String?
+  availabilityZone String?
+  currency         String?
+  designation      String?
+  degreeInfo       String?
+  languages        String[]
+  tools            String[]
+  socialLink       SocialLink[]
+  methodologies    String[]
+  availabilityDays String[]
+  createdAt        DateTime     @default(now())
+  userId           String       @unique @db.ObjectId
+  user             User         @relation(fields: [userId], references: [id])
+}
+
+model CompanyProfile {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  companyName String       @unique
+  industry    String?
+  companySize String?
+  website     String?
+  description String?
+  logoUrl     String?
+  location    String?
+  foundedYear Int?
+  socialLinks SocialLink[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  userId      String       @unique @db.ObjectId
+  user        User         @relation(fields: [userId], references: [id])
+}
+
+model ConnectPurchaseTransaction {
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  userId        String       @db.ObjectId
+  user          User         @relation(fields: [userId], references: [id])
+  type          ConnectsType
+  connects      Int
+  pricePaid     Float?
+  currency      String?
+  paymentMethod String?
+  transactionId String?
+  status        TxnStatus    @default(COMPLETED)
+  createdAt     DateTime     @default(now())
+}
+
+model ConnectUsage {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  jobId        String?
+  connectsUsed Int
+  createdAt    DateTime @default(now())
+  reason       String?
+  userId       String   @db.ObjectId
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model MoodleUser {
+  id             String             @id @default(auto()) @map("_id") @db.ObjectId
+  moodleUserId   Int                @unique
+  moodleUsername String
+  createdAt      DateTime?          @default(now())
+  userId         String             @unique @db.ObjectId
+  user           User               @relation(fields: [userId], references: [id])
+  enrollments    MoodleEnrollment[]
+}
+
+model MoodleCourses {
+  id               String             @id @default(auto()) @map("_id") @db.ObjectId
+  courseId         Int                @unique
+  courseName       String
+  status           CourseStatus       @default(CLOSED)
+  startDate        DateTime?
+  endDate          DateTime?
+  moodleEnrollment MoodleEnrollment[]
+}
+
+model MoodleEnrollment {
+  id             String        @id @default(auto()) @map("_id") @db.ObjectId
+  grade          Float?
+  enrolledAt     DateTime?
+  completedAt    DateTime?
+  moodleUserId   String        @db.ObjectId
+  moodleUser     MoodleUser    @relation(fields: [moodleUserId], references: [id])
+  moodleCourseId Int
+  MoodleCourses  MoodleCourses @relation(fields: [moodleCourseId], references: [courseId])
+
+  @@unique([moodleUserId, moodleCourseId])
+}
+
+model Team {
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  description String
+  projectType String
+  logoUrl     String?
+  createdAt   DateTime     @default(now())
+  NewTeamMembers Json?
+  members     TeamMember[] // ✅ CONFIRMED: This is the correct relation field name
+}
+
+model TeamMember {
+  id       String   @id @default(auto()) @map("_id") @db.ObjectId
+  user     User     @relation(fields: [userId], references: [id])
+  userId   String   @db.ObjectId
+  team     Team     @relation(fields: [teamId], references: [id])
+  teamId   String   @db.ObjectId
+  joinedAt DateTime @default(now())
+
+  @@unique([userId, teamId]) // Prevent same user joining team multiple times
+}
