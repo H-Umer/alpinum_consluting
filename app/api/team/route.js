@@ -35,18 +35,42 @@ function verifyToken(authHeader) {
   }
 }
 
+// Helper function to upload file to S3
+async function uploadFileToS3(file, fileName) {
+  const buffer = Buffer.from(await file.arrayBuffer());
+  const contentDisposition = PREVIEWABLE_TYPES[file.type]
+    ? "inline"
+    : "attachment";
+
+  const upload = new Upload({
+    client: s3Client,
+    params: {
+      Bucket: process.env.AWS_BUCKET_NAME,
+      Key: fileName,
+      Body: buffer,
+      ContentType: file.type,
+      ACL: "public-read",
+      ContentDisposition: contentDisposition,
+    },
+  });
+
+  const result = await upload.done();
+  return result.Location;
+}
+
 export async function POST(req) {
   try {
     // Authentication check
     const authHeader = req.headers.get("authorization");
     const decoded = verifyToken(authHeader);
+
     if (!decoded) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const formData = await req.formData();
     const teamDataRaw = formData.get("teamData");
-    const file = formData.get("teamImage");
+    const teamImageFile = formData.get("teamImage");
 
     if (!teamDataRaw) {
       return NextResponse.json(
@@ -57,12 +81,14 @@ export async function POST(req) {
 
     // Parse the raw team data
     const teamData = JSON.parse(teamDataRaw);
-    const { name, description, projectType, members } = teamData;
+    const { name, description, members } = teamData;
+
+    console.log("Received team data:", teamData);
 
     // Validate required fields
-    if (!name || !description || !projectType) {
+    if (!name || !description) {
       return NextResponse.json(
-        { error: "Name, description, and project type are required" },
+        { error: "Name and description are required" },
         { status: 400 }
       );
     }
@@ -75,88 +101,53 @@ export async function POST(req) {
       );
     }
 
-    // Separate existing and manual members
-    const existingMembers = members.filter((m) => m.type === "existing");
-    const manualMembers = members.filter((m) => m.type === "manual");
+    // Handle team logo upload
+    let teamLogoUrl = null;
+    if (teamImageFile && typeof teamImageFile.arrayBuffer === "function") {
+      const fileName = `team-logos/${uuidv4()}-${teamImageFile.name}`;
+      teamLogoUrl = await uploadFileToS3(teamImageFile, fileName);
+    }
 
-    // Validate existing members
-    if (existingMembers.length > 0) {
-      const existingUserIds = existingMembers.map((m) => m.contractorId);
-      const existingUsers = await prisma.user.findMany({
-        where: {
-          id: { in: existingUserIds },
-          role: "CONTRACTOR",
-        },
-        select: { id: true },
-      });
+    // Process member images
+    const processedMembers = [];
 
-      if (existingUsers.length !== existingUserIds.length) {
-        const missingUsers = existingUserIds.filter(
-          (id) => !existingUsers.some((user) => user.id === id)
-        );
-        return NextResponse.json(
-          {
-            error:
-              "One or more selected users don't exist or aren't contractors",
-            missingUsers,
-          },
-          { status: 400 }
-        );
+    for (const member of members) {
+      let memberImageUrl = null;
+
+      // Check if there's an image for this member
+      if (member.id) {
+        const memberImageFile = formData.get(`memberImage_${member.id}`);
+        if (
+          memberImageFile &&
+          typeof memberImageFile.arrayBuffer === "function"
+        ) {
+          const fileName = `member-photos/${uuidv4()}-${memberImageFile.name}`;
+          memberImageUrl = await uploadFileToS3(memberImageFile, fileName);
+        }
       }
-    }
 
-    // Handle file upload if present
-    let imageUrl = null;
-    if (file && typeof file.arrayBuffer === "function") {
-      const buffer = Buffer.from(await file.arrayBuffer());
-      const fileName = `${uuidv4()}-${file.name}`;
-      const contentDisposition = PREVIEWABLE_TYPES[file.type]
-        ? "inline"
-        : "attachment";
-
-      const upload = new Upload({
-        client: s3Client,
-        params: {
-          Bucket: process.env.AWS_BUCKET_NAME,
-          Key: fileName,
-          Body: buffer,
-          ContentType: file.type,
-          ACL: "public-read",
-          ContentDisposition: contentDisposition,
-        },
+      processedMembers.push({
+        name: member.name,
+        specialization: member.specialization,
+        email: member.email || null,
+        imageUrl: memberImageUrl,
       });
-
-      const result = await upload.done();
-      imageUrl = result.Location;
     }
 
-    // Create the team with all members
+    // Create the team with members
     const newTeam = await prisma.team.create({
       data: {
         name,
         description,
-        projectType,
-        logoUrl: imageUrl,
-        NewTeamMembers: manualMembers, // Store manual members in JSON field
+        // specialization: specialization || null,
+        // projectType: projectType || null,
+        logoUrl: teamLogoUrl,
         members: {
-          create: existingMembers.map((member) => ({
-            userId: member.contractorId,
-            joinedAt: new Date(),
-          })),
+          create: processedMembers,
         },
       },
       include: {
-        members: {
-          include: {
-            user: {
-              select: {
-                firstName: true,
-                lastName: true,
-                email: true,
-              },
-            },
-          },
-        },
+        members: true,
       },
     });
 
@@ -176,74 +167,44 @@ export async function POST(req) {
       },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }
 
-// export async function GET(req) {
-//   try {
-//     // Authentication check
-//     const authHeader = req.headers.get("authorization");
-//     const decoded = verifyToken(authHeader);
-//     if (!decoded) {
-//       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-//     }
-
-//     // 🔄 CHANGED: Use 'members' instead of 'teamMembers' for the include
-//     const teams = await prisma.team.findMany({
-//       orderBy: {
-//         createdAt: "desc",
-//       },
-//       include: {
-//         members: {
-//           include: {
-//             user: {
-//               select: {
-//                 id: true,
-//                 firstName: true,
-//                 lastName: true,
-//                 email: true,
-//               },
-//             },
-//           },
-//         },
-//       },
-//     });
-
-//     return NextResponse.json({ teams }, { status: 200 });
-//   } catch (error) {
-//     console.error("GET /api/team error:", error);
-//     return NextResponse.json(
-//       { error: "Failed to fetch teams" },
-//       { status: 500 }
-//     );
-//   }
-// }
-
-export async function GET() {
+export async function GET(req) {
   try {
+    // Authentication check
+    const authHeader = req.headers.get("authorization");
+    const decoded = verifyToken(authHeader);
+
+    if (!decoded) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    // Fetch all teams with their members
     const teams = await prisma.team.findMany({
-      orderBy: { createdAt: "desc" },
       include: {
-        members: {
-          include: {
-            user: {
-              select: {
-                firstName: true,
-                lastName: true,
-              },
-            },
-          },
-        },
+        members: true,
+      },
+      orderBy: {
+        createdAt: "desc",
       },
     });
-    console.log("teamsteamsteams", teams);
 
-    return NextResponse.json({ teams: teams }, { status: 200 });
+    return NextResponse.json({
+      teams,
+    });
   } catch (error) {
     console.error("Error fetching teams:", error);
     return NextResponse.json(
-      { error: "Failed to fetch teams", details: error.message },
+      {
+        error: "Failed to fetch teams",
+        details: error.message,
+      },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }

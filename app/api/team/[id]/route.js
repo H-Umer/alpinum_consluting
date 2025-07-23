@@ -44,33 +44,50 @@ export async function DELETE(req, { params }) {
 }
 
 export async function GET(req, { params }) {
-  const { id } = params;
-  // console.log("iddddddddddd", id);
-
   try {
-    const team = await prisma.team.findUnique({ where: { id: id } });
+    // Get team ID from params
+    const { id } = params;
+
+    console.log("Fetching team details for ID:", id);
+
+    // Fetch specific team with all related data
+    const team = await prisma.team.findUnique({
+      where: { id: id },
+    });
+
+    // console.log("Fetched team details:", team);
+
     const teamMembers = await prisma.teamMember.findMany({
       where: { teamId: id },
-      include: {
-        user: true,
-      },
     });
-    console.log({ team });
 
+    // console.log("Fetched team members:", teamMembers);
+    // Check if team exists
     if (!team) {
-      return NextResponse.json({ message: "Team not found" }, { status: 404 });
+      return NextResponse.json({ error: "Team not found" }, { status: 404 });
     }
 
-    return NextResponse.json({ team, teamMembers }, { status: 200 });
+    if (!teamMembers) {
+      return NextResponse.json(
+        { error: "team members not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      team,
+      teamMembers,
+    });
   } catch (error) {
     console.error("Error fetching team details:", error);
-
     return NextResponse.json(
       {
-        message: "Server error while fetching team details",
-        error: error.message,
+        error: "Failed to fetch team details",
+        details: error.message,
       },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }
