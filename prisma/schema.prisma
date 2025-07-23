@@ -395,7 +395,6 @@ model User {
   moodleUser        MoodleUser?
   jobPosts          JobPost[]
   jobApplication    JobApplication[]
-  teamMemberships   TeamMember[]                 // 🔄 CHANGED: Renamed from Teams to teamMemberships for clarity
 }
 
 model PublicResume {
@@ -569,23 +568,23 @@ model MoodleEnrollment {
 }
 
 model Team {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
-  name        String
-  description String
-  projectType String
-  logoUrl     String?
-  createdAt   DateTime     @default(now())
-  NewTeamMembers Json?
-  members     TeamMember[] // ✅ CONFIRMED: This is the correct relation field name
+  id            String       @id @default(auto()) @map("_id") @db.ObjectId
+  logoUrl       String?
+  name          String
+  description   String
+  members       TeamMember[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 }
 
 model TeamMember {
-  id       String   @id @default(auto()) @map("_id") @db.ObjectId
-  user     User     @relation(fields: [userId], references: [id])
-  userId   String   @db.ObjectId
-  team     Team     @relation(fields: [teamId], references: [id])
-  teamId   String   @db.ObjectId
-  joinedAt DateTime @default(now())
-
-  @@unique([userId, teamId]) // Prevent same user joining team multiple times
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  name           String
+  specialization String
+  email          String?
+  imageUrl       String?
+  teamId         String   @db.ObjectId
+  team           Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 }

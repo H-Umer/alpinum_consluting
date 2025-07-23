@@ -9,6 +9,7 @@ export default function Contractors() {
   const token = useSelector((state) => state.currentUser.token);
   const user = useSelector((state) => state.currentUser.user);
   const [allCandidates, setAllCandidates] = useState([]);
+  const [allTeams, setAllTeams] = useState([]);
   const [publicResume, setPublicResume] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [loading, setLoading] = useState(false);
@@ -33,6 +34,7 @@ export default function Contractors() {
         },
       });
       const result = await res.json();
+      console.log("resultttttttttt", result);
       if (!res.ok) {
         toast.error(res.message);
       }
@@ -40,6 +42,11 @@ export default function Contractors() {
         (el) => !el.lastName.includes("Dummy")
       );
       setAllCandidates(filterUser);
+
+      // Set teams data
+      if (result.teams) {
+        setAllTeams(result.teams);
+      }
     } catch (err) {
       toast.error(err.message);
       console.error("Error fetching users:", err);
@@ -59,6 +66,7 @@ export default function Contractors() {
         },
       });
       const result = await res.json();
+      console.log("Public Resumesssssssssss:", result);
       if (!res.ok) {
         toast.error(res.message);
       }
@@ -132,6 +140,7 @@ export default function Contractors() {
     city: pr.experience,
     country: null,
     resume: pr.resumeUrl || null,
+    type: "individual",
   }));
 
   const candidates = allCandidates?.map((el) => ({
@@ -148,9 +157,31 @@ export default function Contractors() {
     city: el?.contractorProfile?.city,
     country: el?.contractorProfile?.country,
     resume: el?.resumeUrl || null,
+    type: "individual",
   }));
 
-  const mergedAllCandidates = [...candidates, ...publicResumes];
+  const teams = allTeams?.map((team) => ({
+    id: team.id,
+    name: team.name,
+    designation: "Team",
+    experience: team.members?.length || 0,
+    imageUrl: team.logoUrl || null,
+    email: null,
+    source: "team",
+    startTime: null,
+    endTime: null,
+    availabilityDays: [],
+    city: null,
+    country: null,
+    resume: null,
+    type: "team",
+    description: team.description,
+    members: team.members || [],
+    createdAt: team.createdAt,
+  }));
+
+  // const mergedAllCandidates = [...candidates, ...publicResumes, ...teams];
+  const mergedAllCandidates = [...teams, ...candidates, ...publicResumes];
 
   const filteredUsers = mergedAllCandidates?.filter((user) => {
     const searchTerm = searchQuery.toLowerCase();
@@ -158,7 +189,8 @@ export default function Contractors() {
       user?.name?.toLowerCase().includes(searchTerm) ||
       user?.designation?.toLowerCase().includes(searchTerm) ||
       user?.city?.toLowerCase().includes(searchTerm) ||
-      user?.country?.toLowerCase().includes(searchTerm)
+      user?.country?.toLowerCase().includes(searchTerm) ||
+      user?.description?.toLowerCase().includes(searchTerm)
     );
   });
 
@@ -190,16 +222,203 @@ export default function Contractors() {
     }
   };
 
-  // Handle navigation to teams page
-  const handleTeamsNavigation = () => {
+  const handleTeamView = (teamId) => {
     try {
       setLoading(true);
-      router.push("/company/find-teams");
+      router.push(`/company/find-teams/${teamId}`);
     } catch (err) {
       toast.error(err.message);
       console.log("err", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const renderUserContent = (user) => {
+    if (user.type === "team") {
+      return (
+        <div className="candidates-wrap flex2">
+          <div className="image-shrink">
+            <img
+              alt="Team Logo"
+              style={{
+                objectFit: "cover",
+                objectPosition: "center",
+                border: "1px solid #e4e4e4",
+                width: "120px",
+                height: "120px",
+                borderRadius: "5%",
+              }}
+              src={
+                user?.imageUrl
+                  ? user?.imageUrl
+                  : "/images/profile/placeholder.jpg"
+              }
+            />
+          </div>
+          <div className="content">
+            <h5 className="fw-6 color-3">
+              Team • {user?.members?.length || 0} Members
+            </h5>
+            <h3
+              className="contractor-name"
+              onClick={() => handleTeamView(user?.id)}
+            >
+              {user?.name}
+            </h3>
+            <div className="now-box flex2">
+              <div className="map color-4">{user?.description}</div>
+            </div>
+            {user?.members && user?.members.length > 0 && (
+              <div
+                className="team-members-preview"
+                style={{ marginTop: "10px" }}
+              >
+                <small style={{ color: "#666" }}>
+                  Members:{" "}
+                  {user.members
+                    .slice(0, 3)
+                    .map((member) => member.name)
+                    .join(", ")}
+                  {user.members.length > 3 &&
+                    ` +${user.members.length - 3} more`}
+                </small>
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    } else {
+      return (
+        <div className="candidates-wrap flex2">
+          <div className="image-shrink">
+            <img
+              alt="Profile Picture"
+              style={{
+                objectFit: "cover",
+                objectPosition: "center",
+                border: "1px solid #e4e4e4",
+                width: "120px",
+                height: "120px",
+                borderRadius: "5%",
+              }}
+              src={
+                user?.imageUrl
+                  ? user?.imageUrl
+                  : "/images/profile/placeholder.jpg"
+              }
+            />
+          </div>
+          <div className="content">
+            <h5 className="fw-6 color-3">{user?.designation}</h5>
+            <h3
+              className="contractor-name"
+              onClick={() => {
+                if (user?.source === "contractor") {
+                  router.push(`/company/contractor-profile/${user?.id}`);
+                } else {
+                  router.push(
+                    `/company/contractor-profile/${user?.id}?resumeProfile=true`
+                  );
+                }
+              }}
+            >
+              {user?.name}
+            </h3>
+            {user?.source === "contractor" ? (
+              user.city &&
+              user.country && (
+                <div className="now-box flex2">
+                  <div className="map color-4">
+                    {user?.city + ", " + user?.country}
+                  </div>
+                </div>
+              )
+            ) : (
+              <div className="now-box flex2">Experience {user?.city} year</div>
+            )}
+          </div>
+        </div>
+      );
+    }
+  };
+
+  const renderActionButtons = (user) => {
+    if (user.type === "team") {
+      return (
+        <div className="action-wrap">
+          <ul className="flex2 gap-2">
+            <li>
+              <a
+                onClick={() => handleTeamView(user.id)}
+                className="button-cancel-1 fw-7 remove-file"
+              >
+                View Team
+              </a>
+            </li>
+            <li>
+              <a
+                onClick={() => handleOffers(user.id)}
+                className="button-cancel-1 fw-7 remove-file"
+              >
+                Hire Team
+              </a>
+            </li>
+          </ul>
+        </div>
+      );
+    } else if (user?.source === "contractor") {
+      return (
+        <div className="action-wrap">
+          <ul className="flex2 gap-2">
+            {user.startTime &&
+              user?.endTime &&
+              user?.availabilityDays.length > 0 && (
+                <>
+                  <li>
+                    <a
+                      onClick={() => handleAppointment(user.id)}
+                      className="button-cancel-1 fw-7 remove-file"
+                    >
+                      Schedule Meeting
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      onClick={() => handleOffers(user.id)}
+                      className="button-cancel-1 fw-7 remove-file"
+                    >
+                      Offer Contract
+                    </a>
+                  </li>
+                </>
+              )}
+          </ul>
+        </div>
+      );
+    } else {
+      return (
+        <div className="action-wrap">
+          <ul className="flex2 gap-2">
+            <li>
+              <a
+                onClick={() => sendEmailToAdmin(user.name, user.id)}
+                className="button-cancel-1 fw-7 remove-file"
+              >
+                {sendingEmail[user.id] ? "Requesting..." : "Get Connected"}
+              </a>
+            </li>
+            <li>
+              <a
+                onClick={() => handleDownloadCV(user.resume)}
+                className="button-cancel-1 fw-7 remove-file"
+              >
+                View Resume
+              </a>
+            </li>
+          </ul>
+        </div>
+      );
     }
   };
 
@@ -210,61 +429,12 @@ export default function Contractors() {
           <div className="row">
             <div className="col-lg-12 col-md-12">
               <div className="title-dashboard">
-                <div className="title-dash flex2">Contractors </div>
+                <div className="title-dash flex2">Contractors & Teams</div>
               </div>
             </div>
           </div>
         </div>
       </section>
-
-      {/* Navigation Buttons */}
-      <section className="tab-navigation">
-        <div className="themes-container">
-          <div className="row">
-            <div className="col-lg-12 col-md-12">
-              <div className="tab-buttons" style={{ marginBottom: "20px" }}>
-                <button
-                  className="tab-button active"
-                  style={{
-                    padding: "12px 24px",
-                    marginRight: "10px",
-                    border: "2px solid #f47920",
-                    backgroundColor: "#f47920",
-                    color: "white",
-                    borderRadius: "6px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    fontWeight: "600",
-                    transition: "all 0.3s ease",
-                  }}
-                >
-                  View Top Contractors
-                </button>
-                <button
-                  className="tab-button "
-                  onClick={handleTeamsNavigation}
-                  disabled={loading}
-                  style={{
-                    padding: "12px 24px",
-                    border: "2px solid #f47920",
-                    backgroundColor: "transparent",
-                    color: "#f47920",
-                    borderRadius: "6px",
-                    cursor: loading ? "not-allowed" : "pointer",
-                    fontSize: "14px",
-                    fontWeight: "600",
-                    transition: "all 0.3s ease",
-                    opacity: loading ? 0.6 : 1,
-                  }}
-                >
-                  {loading ? "Loading..." : "Teams"}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       {!loading && (
         <>
           {loading1 && (
@@ -291,7 +461,6 @@ export default function Contractors() {
               </div>
             </section>
           )}
-
           {!loading1 && (
             <section className="flat-dashboard-applicants">
               <div className="themes-container">
@@ -301,7 +470,7 @@ export default function Contractors() {
                       <div className="search-wrapper">
                         <input
                           type="text"
-                          placeholder="Search by name, designation, or location..."
+                          placeholder="Search by name, designation, location, or team description..."
                           value={searchQuery}
                           onChange={(e) => setSearchQuery(e.target.value)}
                           className="search-input"
@@ -325,7 +494,9 @@ export default function Contractors() {
                       </div>
                     </div>
                     <div className="applicants bg-white">
-                      <h3 className="title-appli">View Top Contractors</h3>
+                      <h3 className="title-appli">
+                        View Top Contractors & Teams
+                      </h3>
                       <div className="table-content">
                         <div className="wrap-applicants table-responsive">
                           <table>
@@ -338,132 +509,8 @@ export default function Contractors() {
                             <tbody>
                               {filteredUsers.map((user) => (
                                 <tr key={user?.id} className="file-delete">
-                                  <td>
-                                    <div className="candidates-wrap flex2">
-                                      <div className="image-shrink">
-                                        <img
-                                          alt="Profile Picture"
-                                          style={{
-                                            objectFit: "cover",
-                                            objectPosition: "center",
-                                            border: "1px solid #e4e4e4",
-                                            width: "120px",
-                                            height: "120px",
-                                            borderRadius: "5%",
-                                          }}
-                                          src={
-                                            user?.imageUrl
-                                              ? user?.imageUrl
-                                              : "/images/profile/placeholder.jpg"
-                                          }
-                                        />
-                                      </div>
-                                      <div className="content">
-                                        <h5 className="fw-6 color-3">
-                                          {user?.designation}
-                                        </h5>
-                                        <h3
-                                          className="contractor-name"
-                                          onClick={() => {
-                                            if (user?.source === "contractor") {
-                                              router.push(
-                                                `/company/contractor-profile/${user?.id}`
-                                              );
-                                            } else {
-                                              router.push(
-                                                `/company/contractor-profile/${user?.id}?resumeProfile=true`
-                                              );
-                                            }
-                                          }}
-                                        >
-                                          {user?.name}
-                                        </h3>
-                                        {user?.source === "contractor" ? (
-                                          user.city &&
-                                          user.country && (
-                                            <div className="now-box flex2">
-                                              <div className="map color-4">
-                                                {user?.city +
-                                                  ", " +
-                                                  user?.country}
-                                              </div>
-                                            </div>
-                                          )
-                                        ) : (
-                                          <div className="now-box flex2">
-                                            Experience {user?.city} year
-                                          </div>
-                                        )}
-                                      </div>
-                                    </div>
-                                  </td>
-                                  <td>
-                                    <div className="action-wrap">
-                                      <ul className="flex2 gap-2">
-                                        {user?.source === "contractor" ? (
-                                          <>
-                                            {user.startTime &&
-                                              user?.endTime &&
-                                              user?.availabilityDays.length >
-                                                0 && (
-                                                <>
-                                                  <li>
-                                                    <a
-                                                      onClick={() =>
-                                                        handleAppointment(
-                                                          user.id
-                                                        )
-                                                      }
-                                                      className="button-cancel-1 fw-7 remove-file"
-                                                    >
-                                                      Schedule Meeting
-                                                    </a>
-                                                  </li>
-                                                  <li>
-                                                    <a
-                                                      onClick={() =>
-                                                        handleOffers(user.id)
-                                                      }
-                                                      className="button-cancel-1 fw-7 remove-file"
-                                                    >
-                                                      Offer Contract
-                                                    </a>
-                                                  </li>
-                                                </>
-                                              )}
-                                          </>
-                                        ) : (
-                                          <>
-                                            <li>
-                                              <a
-                                                onClick={() =>
-                                                  sendEmailToAdmin(
-                                                    user.name,
-                                                    user.id
-                                                  )
-                                                }
-                                                className="button-cancel-1 fw-7 remove-file"
-                                              >
-                                                {sendingEmail[user.id]
-                                                  ? "Requesting..."
-                                                  : "Get Connected"}
-                                              </a>
-                                            </li>
-                                            <li>
-                                              <a
-                                                onClick={() =>
-                                                  handleDownloadCV(user.resume)
-                                                }
-                                                className="button-cancel-1 fw-7 remove-file"
-                                              >
-                                                View Resume
-                                              </a>
-                                            </li>
-                                          </>
-                                        )}
-                                      </ul>
-                                    </div>
-                                  </td>
+                                  <td>{renderUserContent(user)}</td>
+                                  <td>{renderActionButtons(user)}</td>
                                 </tr>
                               ))}
                             </tbody>
@@ -478,7 +525,6 @@ export default function Contractors() {
           )}
         </>
       )}
-
       {loading && (
         <section className="flat-dashboard-applicants">
           <div className="themes-container">
