@@ -34,7 +34,7 @@ const menuItems = [
   {
     href: "/contractor/team",
     icon: "icon-meeting",
-    title: "Team",
+    title: "Team Requests",
   },
   // { href: "/contractor/interviews", icon: "icon-meeting", title: "Interviews" },
   // { href: "/candidates-save-jobs", icon: "icon-work", title: "Saved Jobs" },
