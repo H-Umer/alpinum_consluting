@@ -30,11 +30,11 @@ const menuItems = [
     icon: "icon-work",
     title: "Contracts",
   },
-  // {
-  //   href: "/company/team",
-  //   icon: "icon-meeting",
-  //   title: "Team",
-  // },
+  {
+    href: "/company/find-teams",
+    icon: "icon-meeting",
+    title: "Teams",
+  },
 ];
 
 export default function CompanySidebar() {

@@ -1,5 +1,5 @@
+import CreateTeam from "@/components/company/CreateTeam";
 import React from "react";
-import CreateTeam from "@/components/contractor/CreateTeam";
 
 export const metadata = {
   title: "Create Team - Alpinum Consulting",

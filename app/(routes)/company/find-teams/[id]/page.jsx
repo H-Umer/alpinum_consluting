@@ -52,14 +52,24 @@ const TeamDetailPage = () => {
     });
   };
 
-  const getInitials = (name) => {
-    if (!name) return "?";
-    return name
-      .split(" ")
-      .map((word) => word.charAt(0))
-      .join("")
-      .toUpperCase()
-      .slice(0, 2);
+  const getInitials = (firstName, lastName) => {
+    if (!firstName && !lastName) return "?";
+    const first = firstName ? firstName.charAt(0) : "";
+    const last = lastName ? lastName.charAt(0) : "";
+    return (first + last).toUpperCase() || "?";
+  };
+
+  const getRoleBadgeColor = (role) => {
+    if (!role) return "bg-gray-100 text-gray-800";
+
+    const roleColors = {
+      admin: "bg-red-100 text-red-800",
+      manager: "bg-blue-100 text-blue-800",
+      member: "bg-green-100 text-green-800",
+      lead: "bg-purple-100 text-purple-800",
+    };
+
+    return roleColors[role.toLowerCase()] || "bg-gray-100 text-gray-800";
   };
 
   if (loading) {
@@ -101,22 +111,22 @@ const TeamDetailPage = () => {
               <div className="profile-setting bg-white">
                 <div className="wrap-team-detail">
                   {/* Team Header */}
-                  <div className="team-header flex items-start gap-6 mb-8">
-                    {team?.logoUrl && (
+                  <div className="team-header flex items-start gap-6 mb-4">
+                    {team?.logoUrl ? (
                       <img
-                        src={team.logoUrl}
+                        src={team.logoUrl || "/placeholder.svg"}
                         alt={`${team.name || "Team"} logo`}
                         className="w-32 h-32 rounded-lg object-cover border border-gray-200"
                         onError={(e) => {
                           e.target.style.display = "none";
                         }}
                       />
-                    )}
-
-                    {/* Fallback Avatar if no logo */}
-                    {!team?.logoUrl && (
-                      <div className="w-32 h-32 rounded-lg bg-gray-200 flex items-center justify-center text-3xl font-bold text-gray-600 border border-gray-200">
-                        {getInitials(team?.name)}
+                    ) : (
+                      <div className="w-32 h-32 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-3xl font-bold text-white border border-gray-200">
+                        {getInitials(
+                          team?.name?.split(" ")[0],
+                          team?.name?.split(" ")[1]
+                        )}
                       </div>
                     )}
 
@@ -137,6 +147,98 @@ const TeamDetailPage = () => {
                     </div>
                   </div>
 
+                  {/* Additional Team Information */}
+                  <div className="team-additional-info my-2 p-2 border-t border-gray-200 ">
+                    <h3 className="text-xl font-semibold mb-6">
+                      Team Information
+                    </h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                      <div className="info-item p-4 bg-gray-50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                            <svg
+                              className="w-4 h-4 text-white"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
+                              />
+                            </svg>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-gray-700">
+                              Team ID
+                            </p>
+                            <p className="text-sm text-gray-600 font-mono">
+                              {team?.id}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="info-item p-4 bg-gray-50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                            <svg
+                              className="w-4 h-4 text-white"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                              />
+                            </svg>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-gray-700">
+                              Total Members
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {teamMembers.length} members
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="info-item p-4 bg-gray-50 rounded-lg">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                            <svg
+                              className="w-4 h-4 text-white"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                              />
+                            </svg>
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-gray-700">
+                              Created At
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {formatDate(team?.createdAt)}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
                   {/* Team Members Section */}
                   <div className="team-members-section">
                     <h2 className="text-2xl font-semibold mb-6 border-b pb-2">
@@ -144,53 +246,85 @@ const TeamDetailPage = () => {
                     </h2>
 
                     {teamMembers.length > 0 ? (
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {teamMembers.map((member) => (
                           <div
                             key={member.id || `member-${Math.random()}`}
-                            className="member-card p-4 border rounded-lg hover:shadow-md transition-shadow bg-white"
+                            className="member-card p-6 border rounded-xl hover:shadow-lg transition-all duration-300 bg-white hover:border-blue-300"
                           >
                             <div className="flex items-start gap-4">
                               {/* Member Avatar */}
                               <div className="member-avatar-container flex-shrink-0">
-                                {member.imageUrl ? (
-                                  <img
-                                    src={member.imageUrl}
-                                    alt={member.name || "Member"}
-                                    className="w-12 h-12 rounded-full object-cover border border-gray-200"
-                                    onError={(e) => {
-                                      e.target.style.display = "none";
-                                      e.target.nextSibling.style.display =
-                                        "flex";
-                                    }}
-                                  />
-                                ) : (
-                                  <div
-                                    className={`w-12 h-12 rounded-full bg-gray-200 flex items-center justify-center text-lg font-semibold text-gray-600 ${
-                                      member.imageUrl ? "hidden" : "flex"
-                                    }`}
-                                  >
-                                    {getInitials(member.name)}
-                                  </div>
-                                )}
+                                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-lg font-bold text-white border-2 border-white shadow-md">
+                                  {getInitials(
+                                    member.user?.firstName,
+                                    member.user?.lastName
+                                  )}
+                                </div>
                               </div>
 
                               {/* Member Info */}
                               <div className="flex-1 min-w-0">
-                                <h3 className="font-medium text-gray-900 mb-1">
-                                  {member.name || "Unknown Member"}
+                                <h3 className="font-semibold text-gray-900 mb-2 text-lg">
+                                  {member.user?.firstName &&
+                                  member.user?.lastName
+                                    ? `${member.user.firstName} ${member.user.lastName}`
+                                    : member.user?.firstName ||
+                                      member.user?.lastName ||
+                                      "Unknown Member"}
                                 </h3>
 
-                                {member.specialization && (
-                                  <p className="text-sm text-blue-600 font-medium mb-2">
-                                    {member.specialization}
-                                  </p>
+                                {member.role && (
+                                  <span
+                                    className={`inline-block px-2 py-1 rounded-full text-xs font-medium mb-3 ${getRoleBadgeColor(
+                                      member.role
+                                    )}`}
+                                  >
+                                    {member.role.charAt(0).toUpperCase() +
+                                      member.role.slice(1)}
+                                  </span>
                                 )}
 
-                                {member.email && (
-                                  <p className="text-sm text-gray-600 mb-1 truncate">
-                                    📧 {member.email}
-                                  </p>
+                                {member.user?.email && (
+                                  <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
+                                    <svg
+                                      className="w-4 h-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                                      />
+                                    </svg>
+                                    <span className="truncate">
+                                      {member.user.email}
+                                    </span>
+                                  </div>
+                                )}
+
+                                {member.joinedAt && (
+                                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                                    <svg
+                                      className="w-4 h-4"
+                                      fill="none"
+                                      stroke="currentColor"
+                                      viewBox="0 0 24 24"
+                                    >
+                                      <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth={2}
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                                      />
+                                    </svg>
+                                    <span>
+                                      Joined {formatDate(member.joinedAt)}
+                                    </span>
+                                  </div>
                                 )}
                               </div>
                             </div>
@@ -199,10 +333,10 @@ const TeamDetailPage = () => {
                       </div>
                     ) : (
                       /* Empty State */
-                      <div className="text-center py-12">
-                        <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                      <div className="text-center py-16">
+                        <div className="w-20 h-20 mx-auto mb-6 bg-gray-100 rounded-full flex items-center justify-center">
                           <svg
-                            className="w-8 h-8 text-gray-400"
+                            className="w-10 h-10 text-gray-400"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -215,45 +349,16 @@ const TeamDetailPage = () => {
                             />
                           </svg>
                         </div>
-                        <h3 className="text-lg font-medium text-gray-900 mb-2">
+                        <h3 className="text-xl font-medium text-gray-900 mb-3">
                           No Team Members
                         </h3>
-                        <p className="text-gray-500">
-                          This team doesn't have any members yet.
+                        <p className="text-gray-500 max-w-md mx-auto">
+                          This team doesn't have any members yet. Invite team
+                          members to get started with collaboration.
                         </p>
                       </div>
                     )}
                   </div>
-
-                  {/* Additional Team Information */}
-                  {(team?.teamId || Object.keys(team || {}).length > 0) && (
-                    <div className="team-additional-info mt-8 pt-6 border-t">
-                      <h3 className="text-lg font-semibold mb-4">
-                        Additional Information
-                      </h3>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                        {team?.teamId && (
-                          <div>
-                            <span className="font-medium text-gray-700">
-                              Team Reference ID:
-                            </span>
-                            <span className="ml-2 text-gray-600">
-                              {team.teamId}
-                            </span>
-                          </div>
-                        )}
-
-                        <div>
-                          <span className="font-medium text-gray-700">
-                            Total Members:
-                          </span>
-                          <span className="ml-2 text-gray-600">
-                            {teamMembers.length}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  )}
                 </div>
               </div>
             </div>
