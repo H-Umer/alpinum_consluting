@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/navigation";
 import { FaRegTrashCan } from "react-icons/fa6";
+import Link from "next/link";
 
 const Teams = () => {
   const router = useRouter();
@@ -40,6 +41,8 @@ const Teams = () => {
             (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
           )
         : [];
+
+      console.log("Fetched Teamsssssssssss:", sortedTeams);
 
       setTeams(sortedTeams);
     } catch (err) {
@@ -126,12 +129,12 @@ const Teams = () => {
     return (
       <div
         key={team.id || index}
-        className="wd-cv-template cl4"
+        className="wd-cv-template cl4 "
         style={{
           marginBottom: "20px",
-          padding: "20px",
+          padding: "5px",
           border: "1px solid #e4e4e4",
-          borderRadius: "8px",
+          // borderRadius: "8px",
           backgroundColor: "#fff",
           boxShadow: "0 2px 4px rgba(0,0,0,0.05)",
         }}
@@ -338,7 +341,7 @@ const Teams = () => {
       </section>
 
       {isLoading && (
-        <section className="flat-dashboard-resumes flat-dashboard-setting">
+        <section className="flat-dashboard-resumes flat-dashboard-setting bg-[#f5f5f5]">
           <div className="themes-container_main">
             <div className="flex59">
               <Loader />
@@ -350,7 +353,7 @@ const Teams = () => {
       {!isLoading && (
         <>
           {teams.length > 0 ? (
-            <section className="flat-dashboard-resumes flat-dashboard-setting">
+            <section className="flat-dashboard-resumes flat-dashboard-setting bg-[#f5f5f5]">
               <div className="themes-container_main">
                 <div className="tf-tab">
                   <div className="row">
@@ -369,13 +372,9 @@ const Teams = () => {
                           </div>
                           <div className="moodlePortal2 md:col-12 col-lg-3">
                             <div className="tt-button1 tt-button tt-button2 moodlePortal">
-                              <a
-                                onClick={() =>
-                                  router.push("/company/create-team")
-                                }
-                              >
+                              <Link href={"/company/create-team"}>
                                 Create Team
-                              </a>
+                              </Link>
                             </div>
                           </div>
                         </div>
@@ -402,7 +401,7 @@ const Teams = () => {
               </div>
             </section>
           ) : (
-            <section className="flat-dashboard-resumes flat-dashboard-setting">
+            <section className="flat-dashboard-resumes flat-dashboard-setting bg-[#f5f5f5]">
               <div className="themes-container_main">
                 <div className="tf-tab">
                   <div className="row">

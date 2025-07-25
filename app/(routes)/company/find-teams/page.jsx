@@ -1,4 +1,3 @@
-// import TeamPage from "@/components/contractor/Team";
 import Teams from "@/components/company/Team";
 import React from "react";
 import { ToastContainer } from "react-toastify";
@@ -11,7 +10,6 @@ export const metadata = {
 const Page = () => {
   return (
     <>
-      {/* | <ToastContainer position="top-right" autoClose={3000} /> <TeamPage /> */}
       | <ToastContainer position="top-right" autoClose={3000} /> <Teams />
     </>
   );
