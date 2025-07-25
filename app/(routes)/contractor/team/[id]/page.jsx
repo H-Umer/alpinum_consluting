@@ -120,7 +120,7 @@ const TeamDetailPage = () => {
         </div>
       </section>
 
-      <section className="flat-dashboard-resumes flat-dashboard-setting ">
+      <section className="flat-dashboard-resumes flat-dashboard-setting">
         <div className="themes-container">
           <div className="row">
             <div className="col-lg-12 col-md-12">

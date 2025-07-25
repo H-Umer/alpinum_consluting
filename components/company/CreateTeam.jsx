@@ -44,19 +44,6 @@ export default function CreateTeam() {
     }
   }, [token]);
 
-  const projectTypeOptions = [
-    { value: "Web Application", label: "Web Application" },
-    { value: "Mobile Application", label: "Mobile Application" },
-    { value: "Desktop Application", label: "Desktop Application" },
-    { value: "API Development", label: "API Development" },
-    { value: "Data Analysis", label: "Data Analysis" },
-    { value: "Machine Learning", label: "Machine Learning" },
-    { value: "E-commerce", label: "E-commerce" },
-    { value: "Enterprise Software", label: "Enterprise Software" },
-    { value: "MVP Development", label: "MVP Development" },
-    { value: "Maintenance & Support", label: "Maintenance & Support" },
-  ];
-
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -321,7 +308,7 @@ export default function CreateTeam() {
                           />
                         </fieldset>
 
-                        <fieldset>
+                        {/* <fieldset>
                           <label className="title-user fw-7">
                             Project Type *
                           </label>
@@ -337,6 +324,23 @@ export default function CreateTeam() {
                               setTeamInfo((prev) => ({
                                 ...prev,
                                 projectType: option?.value || "",
+                              }))
+                            }
+                          />
+                        </fieldset> */}
+                        <fieldset>
+                          <label className="title-user fw-7">
+                            Project Type *
+                          </label>
+                          <input
+                            type="text"
+                            className="input-form2"
+                            placeholder="Enter project type"
+                            value={teamInfo.projectType}
+                            onChange={(e) =>
+                              setTeamInfo((prev) => ({
+                                ...prev,
+                                projectType: e.target.value,
                               }))
                             }
                           />
